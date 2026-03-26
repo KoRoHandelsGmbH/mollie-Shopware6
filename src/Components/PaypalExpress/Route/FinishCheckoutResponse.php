@@ -9,23 +9,26 @@ use Shopware\Core\System\SalesChannel\StoreApiResponse;
 /**
  * @final
  *
- * @extends StoreApiResponse<ArrayStruct<array{sessionId:string,authenticateId:string}>>
+ * @extends StoreApiResponse<ArrayStruct<array{sessionId:string,authenticateId:string,token:string}>>
  */
 class FinishCheckoutResponse extends StoreApiResponse
 {
     private string $sessionId;
     private string $authenticateId;
+    private string $contextToken;
 
-    public function __construct(string $sessionId, string $authenticateId)
+    public function __construct(string $sessionId, string $authenticateId, string $contextToken)
     {
         $this->sessionId = $sessionId;
         $this->authenticateId = $authenticateId;
+        $this->contextToken = $contextToken;
         parent::__construct(new ArrayStruct(
             [
                 'sessionId' => $sessionId,
                 'authenticateId' => $authenticateId,
+                'token' => $contextToken,
             ],
-            'paypal_express_finish_checkout_response'
+            'paypal_express_finish_checkout_response',
         ));
     }
 
@@ -37,5 +40,10 @@ class FinishCheckoutResponse extends StoreApiResponse
     public function getAuthenticateId(): string
     {
         return $this->authenticateId;
+    }
+
+    public function getContextToken(): string
+    {
+        return $this->contextToken;
     }
 }

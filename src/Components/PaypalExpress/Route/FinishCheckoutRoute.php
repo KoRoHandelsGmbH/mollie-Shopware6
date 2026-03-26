@@ -24,7 +24,7 @@ class FinishCheckoutRoute extends AbstractFinishCheckoutRoute
     public function __construct(
         SettingsService $settingsService,
         CartServiceInterface $cartService,
-        PayPalExpress $paypalExpress
+        PayPalExpress $paypalExpress,
     ) {
         $this->settingsService = $settingsService;
         $this->cartService = $cartService;
@@ -58,23 +58,23 @@ class FinishCheckoutRoute extends AbstractFinishCheckoutRoute
 
         $methodDetails = $payPalExpressSession->methodDetails;
 
-        if (! property_exists($methodDetails, 'shippingAddress') || $methodDetails->shippingAddress === null) {
+        if (!property_exists($methodDetails, 'shippingAddress') || $methodDetails->shippingAddress === null) {
             throw PaypalExpressException::shippingAddressMissing();
         }
-        if (! property_exists($methodDetails, 'billingAddress') || $methodDetails->billingAddress === null) {
+        if (!property_exists($methodDetails, 'billingAddress') || $methodDetails->billingAddress === null) {
             throw PaypalExpressException::billingAddressMissing();
         }
 
         $billingAddress = null;
 
         $mollieShippingAddress = $methodDetails->shippingAddress;
-        if (! property_exists($mollieShippingAddress, 'phone')) {
+        if (!property_exists($mollieShippingAddress, 'phone')) {
             $mollieShippingAddress->phone = '';
         }
-        if (! property_exists($mollieShippingAddress, 'streetAdditional')) {
+        if (!property_exists($mollieShippingAddress, 'streetAdditional')) {
             $mollieShippingAddress->streetAdditional = '';
         }
-        if (! property_exists($mollieShippingAddress, 'email')) {
+        if (!property_exists($mollieShippingAddress, 'email')) {
             $mollieShippingAddress->email = '';
         }
 
@@ -104,8 +104,10 @@ class FinishCheckoutRoute extends AbstractFinishCheckoutRoute
         // create new account or find existing and login
         $context = $this->paypalExpress->prepareCustomer($shippingAddress, $context, $acceptedDataProtection, $billingAddress);
 
+        $newToken = $context->getToken();
+
         // read a new card after login
-        if ($context->getToken() !== $oldToken) {
+        if ($newToken !== $oldToken) {
             $cart = $this->cartService->getCalculatedMainCart($context);
         }
 
@@ -117,6 +119,10 @@ class FinishCheckoutRoute extends AbstractFinishCheckoutRoute
         $this->cartService->updateCart($cart);
         $this->cartService->persistCart($cart, $context);
 
-        return new FinishCheckoutResponse($payPalExpressSession->id, $payPalExpressSession->authenticationId);
+        return new FinishCheckoutResponse(
+            $payPalExpressSession->id,
+            $payPalExpressSession->authenticationId,
+            $newToken,
+        );
     }
 }

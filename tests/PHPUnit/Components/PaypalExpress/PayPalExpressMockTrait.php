@@ -70,7 +70,7 @@ trait PayPalExpressMockTrait
         return $cartService;
     }
 
-    private function getPaypalExpress(bool $withSessionId = false, bool $withStartSession = false, bool $withLoadSession = false, bool $withRedirectUrl = false, bool $withAuthenticateId = false, ?\stdClass $methodDetails = null): PayPalExpress
+    private function getPaypalExpress(bool $withSessionId = false, bool $withStartSession = false, bool $withLoadSession = false, bool $withRedirectUrl = false, bool $withAuthenticateId = false, ?\stdClass $methodDetails = null, ?SalesChannelContext $contextForPrepare = null): PayPalExpress
     {
         if ($methodDetails === null) {
             $methodDetails = new \stdClass();
@@ -96,17 +96,21 @@ trait PayPalExpressMockTrait
         if ($withLoadSession) {
             $paypalExpress->expects($this->once())->method('loadSession')->willReturn($fakeSession);
         }
+        if ($contextForPrepare !== null) {
+            $paypalExpress->method('prepareCustomer')->willReturn($contextForPrepare);
+        }
 
         return $paypalExpress;
     }
 
-    private function getContext(): SalesChannelContext
+    private function getContext(string $token = ''): SalesChannelContext
     {
         /**
          * @var SalesChannelContext $context
          */
         $context = $this->createMock(SalesChannelContext::class);
         $context->method('getSalesChannelId')->willReturn('fakeSalesChannelId');
+        $context->method('getToken')->willReturn($token);
 
         return $context;
     }

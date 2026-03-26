@@ -199,7 +199,7 @@ class ApplePayDirectControllerBase
                 $phone,
                 $paymentToken,
                 $acceptedDataProtection,
-                $context
+                $context,
             );
 
             // we only start our TRY/CATCH here!
@@ -223,12 +223,12 @@ class ApplePayDirectControllerBase
                 $city,
                 $countryCode,
                 $paymentToken,
-                $newContext
+                $newContext,
             );
 
-            return new PaymentResponse(true, $finishUrl, '', $order->getId());
+            return new PaymentResponse(true, $finishUrl, '', $order->getId(), $newContext->getToken());
         } catch (\Throwable $ex) {
-            return new PaymentResponse(false, $errorUrl, $ex->getMessage(), '');
+            return new PaymentResponse(false, $errorUrl, $ex->getMessage(), '', null);
         }
     }
 
