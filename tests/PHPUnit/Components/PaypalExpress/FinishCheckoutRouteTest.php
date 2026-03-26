@@ -4,7 +4,6 @@ declare(strict_types=1);
 namespace MolliePayments\Tests\Components\PaypalExpress;
 
 use Kiener\MolliePayments\Components\PaypalExpress\PaypalExpressException;
-use Kiener\MolliePayments\Components\PaypalExpress\Route\FinishCheckoutResponse;
 use Kiener\MolliePayments\Components\PaypalExpress\Route\FinishCheckoutRoute;
 use Kiener\MolliePayments\Service\CustomFieldsInterface;
 use PHPUnit\Framework\TestCase;
@@ -14,8 +13,8 @@ use Shopware\Core\Framework\Struct\ArrayStruct;
 use Shopware\Core\System\SalesChannel\SalesChannelContext;
 
 /**
- * @covers \Kiener\MolliePayments\Components\PaypalExpress\Route\FinishCheckoutRoute
  * @covers \Kiener\MolliePayments\Components\PaypalExpress\Route\FinishCheckoutResponse
+ * @covers \Kiener\MolliePayments\Components\PaypalExpress\Route\FinishCheckoutRoute
  */
 class FinishCheckoutRouteTest extends TestCase
 {

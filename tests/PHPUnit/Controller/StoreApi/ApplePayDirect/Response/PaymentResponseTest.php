@@ -16,7 +16,7 @@ class PaymentResponseTest extends TestCase
     {
         $response = new PaymentResponse(true, 'https://example.com/finish', '', 'order-id-123', 'session-token-abc');
 
-        /** @var ArrayStruct<array{success:bool,url:string,message:string,orderId:string,token:string|null}> $object */
+        /** @var ArrayStruct<array{success:bool,url:string,message:string,orderId:string,token:null|string}> $object */
         $object = $response->getObject();
 
         $this->assertTrue($object['success']);
@@ -29,7 +29,7 @@ class PaymentResponseTest extends TestCase
     {
         $response = new PaymentResponse(false, 'https://example.com/error', 'Something went wrong', '', null);
 
-        /** @var ArrayStruct<array{success:bool,url:string,message:string,orderId:string,token:string|null}> $object */
+        /** @var ArrayStruct<array{success:bool,url:string,message:string,orderId:string,token:null|string}> $object */
         $object = $response->getObject();
 
         $this->assertFalse($object['success']);
@@ -42,7 +42,7 @@ class PaymentResponseTest extends TestCase
     {
         $response = new PaymentResponse(true, 'https://example.com/finish', '', 'order-id-123');
 
-        /** @var ArrayStruct<array{success:bool,url:string,message:string,orderId:string,token:string|null}> $object */
+        /** @var ArrayStruct<array{success:bool,url:string,message:string,orderId:string,token:null|string}> $object */
         $object = $response->getObject();
 
         $this->assertNull($object['token']);

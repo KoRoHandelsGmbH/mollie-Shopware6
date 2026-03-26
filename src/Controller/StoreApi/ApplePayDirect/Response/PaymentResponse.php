@@ -7,7 +7,7 @@ use Shopware\Core\Framework\Struct\ArrayStruct;
 use Shopware\Core\System\SalesChannel\StoreApiResponse;
 
 /**
- * @extends StoreApiResponse<ArrayStruct<array{success:bool, url:string, message:string, orderId: string, token:string|null}>>
+ * @extends StoreApiResponse<ArrayStruct<array{success:bool, url:string, message:string, orderId: string, token:null|string}>>
  */
 class PaymentResponse extends StoreApiResponse
 {

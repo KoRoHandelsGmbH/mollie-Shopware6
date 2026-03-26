@@ -58,23 +58,23 @@ class FinishCheckoutRoute extends AbstractFinishCheckoutRoute
 
         $methodDetails = $payPalExpressSession->methodDetails;
 
-        if (!property_exists($methodDetails, 'shippingAddress') || $methodDetails->shippingAddress === null) {
+        if (! property_exists($methodDetails, 'shippingAddress') || $methodDetails->shippingAddress === null) {
             throw PaypalExpressException::shippingAddressMissing();
         }
-        if (!property_exists($methodDetails, 'billingAddress') || $methodDetails->billingAddress === null) {
+        if (! property_exists($methodDetails, 'billingAddress') || $methodDetails->billingAddress === null) {
             throw PaypalExpressException::billingAddressMissing();
         }
 
         $billingAddress = null;
 
         $mollieShippingAddress = $methodDetails->shippingAddress;
-        if (!property_exists($mollieShippingAddress, 'phone')) {
+        if (! property_exists($mollieShippingAddress, 'phone')) {
             $mollieShippingAddress->phone = '';
         }
-        if (!property_exists($mollieShippingAddress, 'streetAdditional')) {
+        if (! property_exists($mollieShippingAddress, 'streetAdditional')) {
             $mollieShippingAddress->streetAdditional = '';
         }
-        if (!property_exists($mollieShippingAddress, 'email')) {
+        if (! property_exists($mollieShippingAddress, 'email')) {
             $mollieShippingAddress->email = '';
         }
 

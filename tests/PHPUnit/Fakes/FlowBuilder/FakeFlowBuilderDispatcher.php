@@ -15,8 +15,6 @@ class FakeFlowBuilderDispatcher implements FlowBuilderDispatcherAdapterInterface
     }
 
     /**
-     * @param mixed $event
-     *
      * @return mixed|void
      */
     public function dispatch($event)
