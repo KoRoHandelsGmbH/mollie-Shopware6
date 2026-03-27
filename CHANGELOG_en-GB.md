@@ -1,8 +1,9 @@
 # unreleased
-- Fixed: Webhooks for POS Terminal payments now work correctly‚.
+- Fixed: Webhooks for POS Terminal payments now work correctly.
 - Fixed: Express Checkout now correctly submits only selected radio button values when using the CustomProducts plugin, preventing all options from being sent instead of the chosen ones.
 - Fixed: PayPal Express finish endpoint now always returns the correct session token to continue with, including when a guest customer is created and the session changes.
 - Fixed: Apple Pay Direct payment endpoint now always returns the correct session token to continue with after payment completion.
+- Fixed: PayPal Express start endpoint now accepts optional `redirectUrl` and `cancelUrl` for Store API flows and keeps existing fallbacks when fields are omitted.
 
 # 4.23.0
 - New: Added Vipps as a payment method.

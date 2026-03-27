@@ -3,6 +3,7 @@
 - Behoben: Beim Express Checkout werden nun nur die ausgewählten Radio-Button-Werte übermittelt, wenn das CustomProducts-Plugin verwendet wird. Zuvor wurden alle Optionen gesendet statt nur die gewählten.
 - Behoben: Der PayPal Express Finish-Endpunkt gibt jetzt immer den korrekten Session-Token zurück, der nach dem Ablauf verwendet werden soll, auch wenn ein Gastkunde erstellt wird und sich die Session ändert.
 - Behoben: Der Apple Pay Direct Zahlungsendpunkt gibt jetzt immer den korrekten Session-Token zurück, der nach dem Zahlungsabschluss verwendet werden soll.
+- Behoben: Der PayPal Express Start-Endpunkt akzeptiert jetzt optional `redirectUrl` und `cancelUrl` fuer Store-API-Flows und behaelt die bisherigen Fallbacks bei, wenn Felder fehlen.
 
 # 4.23.0
 - Neu: Vipps als Zahlungsmethode hinzugefügt.
