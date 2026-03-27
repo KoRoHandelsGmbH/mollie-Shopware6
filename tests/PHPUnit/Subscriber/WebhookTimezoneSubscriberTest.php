@@ -201,6 +201,8 @@ class WebhookTimezoneSubscriberTest extends TestCase
 
     /**
      * Set up the transaction service with the provided transaction
+     *
+     * @param mixed $transaction
      */
     private function setUpTransactionService($transaction): void
     {
@@ -213,12 +215,14 @@ class WebhookTimezoneSubscriberTest extends TestCase
     private function createTransactionWithOrder(string $timezoneOnOrder = ''): OrderTransactionEntity
     {
         $order = $this->createMock(OrderEntity::class);
-        if (! empty($timezoneOnOrder)) {
-            $order->method('getCustomFields')->willReturn([
-                'mollie_payments' => [
-                    'timezone' => $timezoneOnOrder,
-                ],
-            ]);
+        if (!empty($timezoneOnOrder)) {
+            $order
+                ->method('getCustomFields')
+                ->willReturn([
+                    'mollie_payments' => [
+                        'timezone' => $timezoneOnOrder,
+                    ],
+                ]);
         }
 
         return $this->createConfiguredMock(OrderTransactionEntity::class, [
@@ -231,7 +235,7 @@ class WebhookTimezoneSubscriberTest extends TestCase
         $this->request = new Request();
         $this->request->attributes->set('_route', $route);
 
-        if (! empty($transactionId)) {
+        if (!empty($transactionId)) {
             $this->request->attributes->set('_route_params', [
                 'swTransactionId' => $transactionId,
             ]);
@@ -247,7 +251,7 @@ class WebhookTimezoneSubscriberTest extends TestCase
         return new RequestEvent(
             $this->createMock(HttpKernelInterface::class),
             $this->request,
-            HttpKernelInterface::MAIN_REQUEST
+            HttpKernelInterface::MAIN_REQUEST,
         );
     }
 }
