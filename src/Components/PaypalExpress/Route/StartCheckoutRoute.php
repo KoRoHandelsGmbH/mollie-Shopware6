@@ -19,6 +19,9 @@ use Symfony\Component\HttpFoundation\Request;
  */
 class StartCheckoutRoute extends AbstractStartCheckoutRoute
 {
+    private const REDIRECT_URL_PARAMETER = 'redirectUrl';
+    private const CANCEL_URL_PARAMETER = 'cancelUrl';
+
     private SettingsService $settingsService;
     private CartServiceInterface $cartService;
     private PayPalExpress $paypalExpress;
@@ -26,7 +29,7 @@ class StartCheckoutRoute extends AbstractStartCheckoutRoute
     public function __construct(
         SettingsService $settingsService,
         CartServiceInterface $cartService,
-        PayPalExpress $paypalExpress
+        PayPalExpress $paypalExpress,
     ) {
         $this->settingsService = $settingsService;
         $this->cartService = $cartService;
@@ -60,8 +63,14 @@ class StartCheckoutRoute extends AbstractStartCheckoutRoute
 
         $sessionId = $mollieShopwareCart->getPayPalExpressSessionID();
 
+        $redirectUrl = trim((string) $request->get(self::REDIRECT_URL_PARAMETER, ''));
+        $redirectUrl = $redirectUrl === '' ? null : $redirectUrl;
+
+        $cancelUrl = trim((string) $request->get(self::CANCEL_URL_PARAMETER, ''));
+        $cancelUrl = $cancelUrl === '' ? null : $cancelUrl;
+
         if ($sessionId === '') {
-            $session = $this->paypalExpress->startSession($cart, $context);
+            $session = $this->paypalExpress->startSession($cart, $context, $redirectUrl, $cancelUrl);
         } else {
             $session = $this->paypalExpress->loadSession($sessionId, $context);
         }
@@ -82,7 +91,7 @@ class StartCheckoutRoute extends AbstractStartCheckoutRoute
 
         return new StartCheckoutResponse(
             $session->id,
-            $session->getRedirectUrl()
+            $session->getRedirectUrl(),
         );
     }
 }
