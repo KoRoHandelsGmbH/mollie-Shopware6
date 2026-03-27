@@ -70,8 +70,17 @@ trait PayPalExpressMockTrait
         return $cartService;
     }
 
-    private function getPaypalExpress(bool $withSessionId = false, bool $withStartSession = false, bool $withLoadSession = false, bool $withRedirectUrl = false, bool $withAuthenticateId = false, ?\stdClass $methodDetails = null, ?SalesChannelContext $contextForPrepare = null): PayPalExpress
-    {
+    private function getPaypalExpress(
+        bool $withSessionId = false,
+        bool $withStartSession = false,
+        bool $withLoadSession = false,
+        bool $withRedirectUrl = false,
+        bool $withAuthenticateId = false,
+        ?\stdClass $methodDetails = null,
+        ?SalesChannelContext $contextForPrepare = null,
+        ?string $expectedStartRedirectUrl = null,
+        ?string $expectedStartCancelUrl = null,
+    ): PayPalExpress {
         if ($methodDetails === null) {
             $methodDetails = new \stdClass();
         }
@@ -91,10 +100,18 @@ trait PayPalExpressMockTrait
         }
 
         if ($withStartSession) {
-            $paypalExpress->expects($this->once())->method('startSession')->willReturn($fakeSession);
+            $paypalExpress
+                ->expects($this->once())
+                ->method('startSession')
+                ->with($this->anything(), $this->anything(), $expectedStartRedirectUrl, $expectedStartCancelUrl)
+                ->willReturn($fakeSession);
         }
         if ($withLoadSession) {
-            $paypalExpress->expects($this->once())->method('loadSession')->willReturn($fakeSession);
+            $paypalExpress
+                ->expects($this->once())
+                ->method('loadSession')
+                ->with($this->anything(), $this->anything())
+                ->willReturn($fakeSession);
         }
         if ($contextForPrepare !== null) {
             $paypalExpress->method('prepareCustomer')->willReturn($contextForPrepare);
