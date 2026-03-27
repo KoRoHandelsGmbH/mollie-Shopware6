@@ -142,6 +142,9 @@ class SettingsService implements PluginSettingsServiceInterface
         return $allConfigs;
     }
 
+    /**
+     * @param mixed $value
+     */
     public function set(string $key, $value, ?string $salesChannelId = null): void
     {
         $this->systemConfigService->set(self::SYSTEM_CONFIG_DOMAIN . '.' . $key, $value, $salesChannelId);
