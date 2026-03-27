@@ -104,14 +104,16 @@ trait PayPalExpressMockTrait
                 ->expects($this->once())
                 ->method('startSession')
                 ->with($this->anything(), $this->anything(), $expectedStartRedirectUrl, $expectedStartCancelUrl)
-                ->willReturn($fakeSession);
+                ->willReturn($fakeSession)
+            ;
         }
         if ($withLoadSession) {
             $paypalExpress
                 ->expects($this->once())
                 ->method('loadSession')
                 ->with($this->anything(), $this->anything())
-                ->willReturn($fakeSession);
+                ->willReturn($fakeSession)
+            ;
         }
         if ($contextForPrepare !== null) {
             $paypalExpress->method('prepareCustomer')->willReturn($contextForPrepare);

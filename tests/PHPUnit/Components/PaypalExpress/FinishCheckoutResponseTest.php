@@ -27,4 +27,3 @@ class FinishCheckoutResponseTest extends TestCase
         $this->assertSame('token-789', $object['token']);
     }
 }
-
