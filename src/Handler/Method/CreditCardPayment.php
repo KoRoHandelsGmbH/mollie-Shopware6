@@ -49,6 +49,7 @@ class CreditCardPayment extends PaymentHandler
             // change payment sequenceType to first if this is a single-click payment
             if ($this->enableSingleClickPayment && $isSaveCardToken) {
                 $orderData['payment']['sequenceType'] = PaymentHandler::PAYMENT_SEQUENCE_TYPE_FIRST;
+                $orderData['payment']['storeCredentials'] = true;
             }
 
             return $orderData;
