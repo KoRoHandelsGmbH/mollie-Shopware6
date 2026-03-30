@@ -99,6 +99,11 @@
                     "message": {
                       "type": "string",
                       "description": "Additional message (optional)."
+                    },
+                    "token": {
+                      "type": "string",
+                      "nullable": true,
+                      "description": "Context token that should be used after the Apple Pay flow completes."
                     }
                   },
                   "required": ["success", "url"]
@@ -106,7 +111,8 @@
                 "example": {
                   "success": true,
                   "url": "https://applepay.mollie.com/redirect",
-                  "message": "Payment initiated successfully."
+                  "message": "Payment initiated successfully.",
+                  "token": "sw-context-token-123"
                 }
               }
             }

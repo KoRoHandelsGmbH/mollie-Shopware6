@@ -10,7 +10,12 @@ use PHPUnit\Framework\TestCase;
 use Shopware\Core\Framework\HttpException;
 use Shopware\Core\Framework\Plugin\Exception\DecorationPatternException;
 use Shopware\Core\Framework\Struct\ArrayStruct;
+use Shopware\Core\System\SalesChannel\SalesChannelContext;
 
+/**
+ * @covers \Kiener\MolliePayments\Components\PaypalExpress\Route\FinishCheckoutResponse
+ * @covers \Kiener\MolliePayments\Components\PaypalExpress\Route\FinishCheckoutRoute
+ */
 class FinishCheckoutRouteTest extends TestCase
 {
     use PayPalExpressMockTrait;
@@ -170,14 +175,21 @@ class FinishCheckoutRouteTest extends TestCase
         $billingAddress->country = 'test';
         $methodDetails->billingAddress = $billingAddress;
 
-        $paypalExpress = $this->getPaypalExpress(true, false, true, false, true, $methodDetails);
+        $expectedToken = 'expected-session-token';
+
+        $newContext = $this->createMock(SalesChannelContext::class);
+        $newContext->method('getToken')->willReturn($expectedToken);
+        $newContext->method('getSalesChannelId')->willReturn('fakeSalesChannelId');
+
+        $paypalExpress = $this->getPaypalExpress(true, false, true, false, true, $methodDetails, $newContext);
 
         $route = new FinishCheckoutRoute($settingsService, $cartService, $paypalExpress);
-        $response = $route->finishCheckout($this->getContext());
+        $response = $route->finishCheckout($this->getContext($expectedToken));
         $cartExtension = $this->cart->getExtension(CustomFieldsInterface::MOLLIE_KEY);
 
         $this->assertNotNull($response->getSessionId());
         $this->assertNotNull($response->getAuthenticateId());
+        $this->assertSame($expectedToken, $response->getContextToken());
 
         $this->assertInstanceOf(ArrayStruct::class, $cartExtension);
         $this->assertSame('fakeAuthenticationId', $cartExtension[CustomFieldsInterface::PAYPAL_EXPRESS_AUTHENTICATE_ID]);

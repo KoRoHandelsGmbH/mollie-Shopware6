@@ -1,6 +1,9 @@
 # unreleased
 - Behoben: Webhooks für POS-Terminal-Zahlungen funktionieren nun korrekt.
 - Behoben: Beim Express Checkout werden nun nur die ausgewählten Radio-Button-Werte übermittelt, wenn das CustomProducts-Plugin verwendet wird. Zuvor wurden alle Optionen gesendet statt nur die gewählten.
+- Behoben: Der PayPal Express Finish-Endpunkt gibt jetzt immer den korrekten Session-Token zurück, der nach dem Ablauf verwendet werden soll, auch wenn ein Gastkunde erstellt wird und sich die Session ändert.
+- Behoben: Der Apple Pay Direct Zahlungsendpunkt gibt jetzt immer den korrekten Session-Token zurück, der nach dem Zahlungsabschluss verwendet werden soll.
+- Behoben: Der PayPal Express Start-Endpunkt akzeptiert jetzt optional `redirectUrl` und `cancelUrl` fuer Store-API-Flows und behaelt die bisherigen Fallbacks bei, wenn Felder fehlen.
 
 # 4.23.0
 - Neu: Vipps als Zahlungsmethode hinzugefügt.
@@ -21,7 +24,7 @@
 - Die Verarbeitung von Positionen mit negativen Beträgen wurde behoben.
 
 # 4.22.0
-- Behebung eines falschen Warenkorbpreises bei Apple Pay Direct in Kombination mit Netto-Anzeigepreise bei Kundengruppen. Hier wurden keine Steuern miteinberechnet. 
+- Behebung eines falschen Warenkorbpreises bei Apple Pay Direct in Kombination mit Netto-Anzeigepreise bei Kundengruppen. Hier wurden keine Steuern miteinberechnet.
 - Behebung eines Problems, bei dem in manchen zufälligen Fällen die Kreditkartenfelder nicht funktionieren. (mollie.js defer-sync Laden wurde entfernt).
 - Wenn ein Kunde die Zahlungsart eines Abonnements ändert, werden alle älteren, noch stornierbaren Zahlungen automatisch abgebrochen.
 - Die Kompatibilität mit dem Plugin „Zusatzoptionen/Garantien“ wurde implementiert.
@@ -43,7 +46,7 @@
 - Die Profilnavigation wurde erweitert und umfasst nun die Verwaltung gespeicherter Kreditkartendaten (nur sichtbar, wenn Kreditkartendaten vorhanden sind).
 - Tracking-Parameter sind jetzt optional für alle Versand-API-Routen.
 
-# 4.20.1 
+# 4.20.1
 - Problem behoben. In Shopware 6.5 war die Order Übersicht nicht aufrufbar
 
 # 4.20.0 - 2025-11-19
@@ -603,7 +606,7 @@
 Diese Version bietet Unterstützung für die Massenbearbeitung von Produkten in der Administration. Aufgrund interner Änderungen überprüfen Sie bitte nach dem Update die konfigurierten "Gutschein Typen" Ihrer Produkte. Es sollte kein Problem geben, aber überprüfen Sie bitte, ob diese Einstellungen noch vorhanden sind, oder legen Sie diese erneut fest.
 
 ### Features
-- Brandneue Unterstützung für Abonnements in Shopware. Konfigurieren Sie Produkte und verkaufen Sie diese basierend auf täglichen, wöchentlichen oder monatlichen Abonnements.  
+- Brandneue Unterstützung für Abonnements in Shopware. Konfigurieren Sie Produkte und verkaufen Sie diese basierend auf täglichen, wöchentlichen oder monatlichen Abonnements.
   [Mehr Infos hier](https://github.com/mollie/Shopware6/wiki/Subscription)
 - Erweiterung der Status-Mappings für Rückerstattungen und Teilrückerstattungen.
 - Neue Zahlungsmethode: in3
@@ -669,8 +672,8 @@ Diese Version bietet Unterstützung für die Massenbearbeitung von Produkten in 
 - Behebung von Javascript Fehlern, wenn iDEAL dem Verkaufskanal zugewiesen wurde, aber Mollie nicht korrekt konfiguriert war.
 
 ## [2.1.2] - 2022-03-16
-Diese Version bringt nur die Unterstützung für die aktuellste Shopware Version 6.4.9.0.  
-Die vorherige Version sollte nie dafür freigegeben worden sein. Der Shopware Store hat die neue Shopware-Version leider automatisch freigegeben. Dies wurde natürlich für die Zukunft deaktiviert.  
+Diese Version bringt nur die Unterstützung für die aktuellste Shopware Version 6.4.9.0.
+Die vorherige Version sollte nie dafür freigegeben worden sein. Der Shopware Store hat die neue Shopware-Version leider automatisch freigegeben. Dies wurde natürlich für die Zukunft deaktiviert.
 Wir entschuldigen uns für etwaige Unannehmlichkeiten.
 
 ## [2.1.1] - 2022-02-16
@@ -691,12 +694,12 @@ Wir entschuldigen uns für etwaige Unannehmlichkeiten.
 - PayPal Zahlungen mit Status "wartend" führen nun zu einer erfolgreichen Bestellung.
 
 ## [2.0.0] - 2022-01-31
-Willkommen bei MolliePayments v2.0! 🎉  
-Wir hoffen, dass Ihnen die vielen neuen Funktionen, Updates und Korrekturen gefallen.  
+Willkommen bei MolliePayments v2.0! 🎉
+Wir hoffen, dass Ihnen die vielen neuen Funktionen, Updates und Korrekturen gefallen.
 Schön, Sie als unseren Kunden zu haben :)
 
 ### Grundlegende Änderungen
-Aufgrund des Flow Builders mussten wir die fest integrierten Versand/Erstattungen, die bei Statusübergängen erfolgten, entfernen.  
+Aufgrund des Flow Builders mussten wir die fest integrierten Versand/Erstattungen, die bei Statusübergängen erfolgten, entfernen.
 Aber keine Sorge, es gibt eine neue Funktion **"Automatischer Versand"**, die standardmäßig aktiviert ist und dafür sorgt, dass es nach dem Update auf v2.0.0 genauso funktioniert.
 
 ### Features

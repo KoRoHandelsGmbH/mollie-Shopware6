@@ -8,12 +8,29 @@
   "paths": {
     "/mollie/paypal-express/start": {
       "get": {
-        "tags": [
-          "Mollie",
-          "Paypal Express"
-        ],
+        "tags": ["Mollie", "Paypal Express"],
         "summary": "Starts the checkout for paypal express. The Cart should be prefilled before this request. When using shopware add to cart request, you can add  `isExpressCheckout=1` to save the current user cart and add just this one product in the request",
         "operationId": "paypalExpressCheckoutStart",
+        "parameters": [
+          {
+            "name": "redirectUrl",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Optional custom redirect target after the PayPal flow. If omitted or empty, the plugin keeps the default redirect URL behavior."
+          },
+          {
+            "name": "cancelUrl",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Optional custom cancel target after the PayPal flow. If omitted or empty, the plugin keeps the default cancel URL behavior."
+          }
+        ],
         "responses": {
           "200": {
             "description": "Response indicating success or failure.",
@@ -43,10 +60,7 @@
     },
     "/mollie/paypal-express/finish": {
       "get": {
-        "tags": [
-          "Mollie",
-          "Paypal Express"
-        ],
+        "tags": ["Mollie", "Paypal Express"],
         "summary": "Redirect target when customer complete payment on paypal.com. ",
         "operationId": "paypalExpressCheckoutFinish",
         "responses": {
@@ -66,9 +80,14 @@
                       "type": "string",
                       "example": "auth_xxx",
                       "description": "Authenticate ID can be now sent with payment payload to mollie. Authenticate ID is also stored as cart extension and the usual checkout can be done"
+                    },
+                    "token": {
+                      "type": "string",
+                      "example": "sw-context-token-123",
+                      "description": "Context token that should be used after finishing the PayPal Express flow."
                     }
                   },
-                  "required": ["sessionId","authenticateId"]
+                  "required": ["sessionId", "authenticateId", "token"]
                 }
               }
             }
@@ -78,10 +97,7 @@
     },
     "/mollie/paypal-express/cancel": {
       "get": {
-        "tags": [
-          "Mollie",
-          "Paypal Express"
-        ],
+        "tags": ["Mollie", "Paypal Express"],
         "summary": "Redirect target when customer cancel payment on paypal.com. This route restores the cart if a backup cart was created at the beginning and cancel the session at mollie",
         "operationId": "paypalExpressCheckoutCancel",
         "responses": {

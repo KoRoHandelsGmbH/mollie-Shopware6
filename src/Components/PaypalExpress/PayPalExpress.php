@@ -29,6 +29,7 @@ class PayPalExpress
      * define how long we will wait for the session response
      */
     private const SESSION_BASE_TIMEOUT = 2000;
+
     /**
      * @var PaymentMethodRepository
      */
@@ -92,7 +93,11 @@ class PayPalExpress
         $criteria->addFilter(new EqualsFilter('salesChannels.id', $context->getSalesChannelId()));
 
         /** @var array<string> $paymentMethods */
-        $paymentMethods = $this->repoPaymentMethods->getRepository()->searchIds($criteria, $context->getContext())->getIds();
+        $paymentMethods = $this->repoPaymentMethods
+            ->getRepository()
+            ->searchIds($criteria, $context->getContext())
+            ->getIds()
+        ;
 
         if (count($paymentMethods) <= 0) {
             throw new \Exception('Payment Method PayPal Express not found in system');
@@ -104,9 +109,23 @@ class PayPalExpress
     /**
      * @throws \Mollie\Api\Exceptions\ApiException
      */
-    public function startSession(Cart $cart, SalesChannelContext $context): Session
-    {
+    public function startSession(
+        Cart $cart,
+        SalesChannelContext $context,
+        ?string $redirectUrl = null,
+        ?string $cancelUrl = null,
+    ): Session {
         $mollie = $this->mollieApiFactory->getLiveClient($context->getSalesChannelId());
+
+        $redirectUrl =
+            $redirectUrl !== null && $redirectUrl !== ''
+                ? $redirectUrl
+                : $this->urlBuilder->buildPaypalExpressRedirectUrl();
+
+        $cancelUrl =
+            $cancelUrl !== null && $cancelUrl !== ''
+                ? $cancelUrl
+                : $this->urlBuilder->buildPaypalExpressCancelUrl();
 
         $params = [
             'method' => 'paypal',
@@ -116,10 +135,10 @@ class PayPalExpress
             'description' => 'Paypal Express',
             'amount' => $this->priceBuilder->build(
                 $cart->getPrice()->getTotalPrice(),
-                $context->getCurrency()->getIsoCode()
+                $context->getCurrency()->getIsoCode(),
             ),
-            'redirectUrl' => $this->urlBuilder->buildPaypalExpressRedirectUrl(),
-            'cancelUrl' => $this->urlBuilder->buildPaypalExpressCancelUrl(),
+            'redirectUrl' => $redirectUrl,
+            'cancelUrl' => $cancelUrl,
         ];
 
         return $mollie->sessions->create($params);
@@ -168,7 +187,7 @@ class PayPalExpress
                     $paypalExpressId,
                     $context,
                     $acceptedDataProtection,
-                    $billingAddress
+                    $billingAddress,
                 );
             }
 

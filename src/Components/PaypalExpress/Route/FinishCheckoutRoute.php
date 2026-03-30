@@ -24,7 +24,7 @@ class FinishCheckoutRoute extends AbstractFinishCheckoutRoute
     public function __construct(
         SettingsService $settingsService,
         CartServiceInterface $cartService,
-        PayPalExpress $paypalExpress
+        PayPalExpress $paypalExpress,
     ) {
         $this->settingsService = $settingsService;
         $this->cartService = $cartService;
@@ -104,8 +104,10 @@ class FinishCheckoutRoute extends AbstractFinishCheckoutRoute
         // create new account or find existing and login
         $context = $this->paypalExpress->prepareCustomer($shippingAddress, $context, $acceptedDataProtection, $billingAddress);
 
+        $newToken = $context->getToken();
+
         // read a new card after login
-        if ($context->getToken() !== $oldToken) {
+        if ($newToken !== $oldToken) {
             $cart = $this->cartService->getCalculatedMainCart($context);
         }
 
@@ -117,6 +119,10 @@ class FinishCheckoutRoute extends AbstractFinishCheckoutRoute
         $this->cartService->updateCart($cart);
         $this->cartService->persistCart($cart, $context);
 
-        return new FinishCheckoutResponse($payPalExpressSession->id, $payPalExpressSession->authenticationId);
+        return new FinishCheckoutResponse(
+            $payPalExpressSession->id,
+            $payPalExpressSession->authenticationId,
+            $newToken,
+        );
     }
 }

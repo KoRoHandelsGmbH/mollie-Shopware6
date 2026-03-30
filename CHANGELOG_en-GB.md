@@ -1,6 +1,9 @@
 # unreleased
-- Fixed: Webhooks for POS Terminal payments now work correctly‚.
+- Fixed: Webhooks for POS Terminal payments now work correctly.
 - Fixed: Express Checkout now correctly submits only selected radio button values when using the CustomProducts plugin, preventing all options from being sent instead of the chosen ones.
+- Fixed: PayPal Express finish endpoint now always returns the correct session token to continue with, including when a guest customer is created and the session changes.
+- Fixed: Apple Pay Direct payment endpoint now always returns the correct session token to continue with after payment completion.
+- Fixed: PayPal Express start endpoint now accepts optional `redirectUrl` and `cancelUrl` for Store API flows and keeps existing fallbacks when fields are omitted.
 
 # 4.23.0
 - New: Added Vipps as a payment method.
@@ -48,10 +51,10 @@
 # 4.20.0
 - Changed order builder to use order addresses instead of customer default addresses to make sure the address in mollie matches the order information in shopware.
 - Fixed an issue where Apple Pay Direct did not work when the phone number was configured as a required field in the shop.
-- Fixed compatibility with shopware commercial 
+- Fixed compatibility with shopware commercial
 - Fixed: Resolved an issue where Mollie data was shown in the admin order view even when the final transaction was not processed via Mollie.
 - Shopware Refunds now correctly applies the refunded amount.
-- Title in the Admin Configuration was fixed 
+- Title in the Admin Configuration was fixed
 
 ## [4.19.0] - 2025-10-09
 - Added Estonian Language Support
