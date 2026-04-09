@@ -32,7 +32,9 @@ class Mandate
         try {
             $apiClient = $this->clientFactory->getClient($salesChannelId);
 
-            return $apiClient->mandates->listForId($customerId);
+            return $apiClient->mandates->listForId($customerId, null, null, ['scopes' => [
+                'customer-present'
+            ]]);
         } catch (ApiException $e) {
             throw new CouldNotFetchMollieCustomerMandatesException($customerId, $salesChannelId, $e);
         }

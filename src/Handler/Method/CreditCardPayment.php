@@ -48,7 +48,7 @@ class CreditCardPayment extends PaymentHandler
             $isSaveCardToken = $customFields[CustomFieldsInterface::MOLLIE_KEY][CustomerService::CUSTOM_FIELDS_KEY_SHOULD_SAVE_CARD_DETAIL] ?? false;
             // change payment sequenceType to first if this is a single-click payment
             if ($this->enableSingleClickPayment && $isSaveCardToken) {
-                $orderData['payment']['sequenceType'] = PaymentHandler::PAYMENT_SEQUENCE_TYPE_FIRST;
+                $orderData['payment']['storeCredentials'] = true;
             }
 
             return $orderData;
