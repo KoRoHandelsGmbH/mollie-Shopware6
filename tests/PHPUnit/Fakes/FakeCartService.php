@@ -62,11 +62,11 @@ class FakeCartService implements CartServiceInterface
 
     public function updatePaymentMethod(SalesChannelContext $context, string $paymentMethodID): SalesChannelContext
     {
-        // TODO: Implement updatePaymentMethod() method.
+        return $this->salesChannelContext;
     }
 
     public function persistCart(Cart $cart, SalesChannelContext $context): Cart
     {
-        // TODO: Implement persistCart() method.
+        return $cart;
     }
 }

@@ -26,7 +26,10 @@ class ApplePayFormatterTest extends TestCase
         $fakeSnippets->addSnippet('molliePayments.payments.applePayDirect.captionSubtotal', 'Subtotal');
         $fakeSnippets->addSnippet('molliePayments.payments.applePayDirect.captionTaxes', 'Taxes');
 
-        $routingDetector = new RoutingDetector(new RequestStack(new Request()));
+        $requestStack = new RequestStack();
+        $requestStack->push(new Request());
+
+        $routingDetector = new RoutingDetector($requestStack);
         $this->formatter = new ApplePayFormatter($fakeSnippets, $routingDetector);
     }
 

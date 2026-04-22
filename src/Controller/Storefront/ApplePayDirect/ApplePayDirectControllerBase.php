@@ -18,6 +18,7 @@ use Shopware\Core\Framework\Context;
 use Shopware\Core\Framework\DataAbstractionLayer\EntityCollection;
 use Shopware\Core\Framework\DataAbstractionLayer\EntityRepository;
 use Shopware\Core\Framework\DataAbstractionLayer\Search\Criteria;
+use Shopware\Core\PlatformRequest;
 use Shopware\Core\System\SalesChannel\SalesChannelContext;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\RedirectResponse;
@@ -175,9 +176,10 @@ class ApplePayDirectControllerBase extends AbstractStoreFrontController
         try {
             $content = json_decode((string) $request->getContent(), true);
 
-            $validationURL = (string) $content['validationUrl'];
+            $validationURL = (string) ($content['validationUrl'] ?? '');
+            $domain = $request->getHost();
 
-            $session = $this->applePay->createPaymentSession($validationURL, '', $context);
+            $session = $this->applePay->createPaymentSession($validationURL, $domain, $context);
 
             return new JsonResponse([
                 'session' => $session,
@@ -283,7 +285,7 @@ class ApplePayDirectControllerBase extends AbstractStoreFrontController
                 throw new \Exception('PaymentToken not found!');
             }
 
-            $this->applePay->prepareCustomer(
+            $newContext = $this->applePay->prepareCustomer(
                 $firstname,
                 $lastname,
                 $email,
@@ -297,10 +299,15 @@ class ApplePayDirectControllerBase extends AbstractStoreFrontController
                 $context
             );
 
+            $request->headers->set(PlatformRequest::HEADER_CONTEXT_TOKEN, $newContext->getToken());
+
             // forward to the finish-payment page,
             // where our customer is correctly known, and where we
             // can continue with our correct sales channel context.
-            return $this->forwardToRoute('frontend.mollie.apple-pay.finish-payment', []);
+            return $this->forwardToRoute('frontend.mollie.apple-pay.finish-payment', [
+                PlatformRequest::ATTRIBUTE_SALES_CHANNEL_CONTEXT_OBJECT => $newContext,
+                PlatformRequest::ATTRIBUTE_SALES_CHANNEL_ID => $newContext->getSalesChannelId(),
+            ]);
         } catch (\Throwable $ex) {
             $this->logger->error('Apple Pay Direct error when starting payment: ' . $ex->getMessage());
 

@@ -26,6 +26,7 @@ use Mollie\Api\Endpoints\WalletEndpoint;
 use Mollie\Api\MollieApiClient;
 use MolliePayments\Tests\Fakes\FakeCartService;
 use MolliePayments\Tests\Traits\MockTrait;
+use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\TestCase;
 use Shopware\Core\Checkout\Cart\Cart;
 use Shopware\Core\Checkout\Cart\Delivery\Struct\Delivery;
@@ -46,6 +47,7 @@ use Shopware\Core\Framework\DataAbstractionLayer\EntityRepository;
 use Shopware\Core\System\Country\CountryEntity;
 use Shopware\Core\System\SalesChannel\SalesChannelContext;
 
+#[CoversClass(ApplePayDirect::class)]
 class ApplePayDirectTest extends TestCase
 {
     use MockTrait;
@@ -54,6 +56,7 @@ class ApplePayDirectTest extends TestCase
 
     private $validationUrlAllowListGateway;
     private ApplePayDirect $applePay;
+    private ShopService $shopService;
 
     /**
      * @var MollieApiFactory|\PHPUnit\Framework\MockObject\MockObject
@@ -103,7 +106,7 @@ class ApplePayDirectTest extends TestCase
         $this->apiFactory = $this->createDummyMock(MollieApiFactory::class, $this);
 
         /** @var ShopService $shopService */
-        $shopService = $this->createDummyMock(ShopService::class, $this);
+        $this->shopService = $this->createDummyMock(ShopService::class, $this);
 
         /** @var OrderService $orderService */
         $orderService = $this->createDummyMock(OrderService::class, $this);
@@ -127,7 +130,7 @@ class ApplePayDirectTest extends TestCase
             $repoPaymentMethods,
             $cartBackupService,
             $this->apiFactory,
-            $shopService,
+            $this->shopService,
             $orderService,
             $repoOrderAdresses,
             $this->validationUrlAllowListGateway,
@@ -211,6 +214,36 @@ class ApplePayDirectTest extends TestCase
         ;
 
         $actual = $this->applePay->createPaymentSession('https://example.com', $domain, $this->scContext);
+
+        $this->assertSame($expected, $actual);
+    }
+
+    public function testCanCreatePaymentSessionForConfiguredShopDomainWithoutAllowList(): void
+    {
+        $this->shopService->expects($this->once())
+            ->method('getShopUrl')
+            ->with(true)
+            ->willReturn('shop.example.com/nl')
+        ;
+
+        $client = $this->createMock(MollieApiClient::class);
+        $client->wallets = $this->createMock(WalletEndpoint::class);
+        $this->apiFactory->expects($this->once())
+            ->method('getLiveClient')
+            ->willReturn($client)
+        ;
+
+        $client->wallets->expects($this->once())
+            ->method('requestApplePayPaymentSession')
+            ->with('shop.example.com', 'https://apple-pay-gateway.apple.com/paymentservices/startSession')
+            ->willReturn($expected = random_bytes(16))
+        ;
+
+        $this->validationUrlAllowListGateway->expects($this->never())
+            ->method('getAllowList')
+        ;
+
+        $actual = $this->applePay->createPaymentSession('https://apple-pay-gateway.apple.com/paymentservices/startSession', 'https://shop.example.com/nl', $this->scContext);
 
         $this->assertSame($expected, $actual);
     }

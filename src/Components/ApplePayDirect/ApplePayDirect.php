@@ -484,14 +484,18 @@ class ApplePayDirect
      */
     private function getValidDomain(string $domain, SalesChannelContext $context): string
     {
+        $domainExtractor = new DomainExtractor();
+        $shopDomain = $domainExtractor->getCleanDomain($this->shopService->getShopUrl(stripHttp: true));
+
         //   if we have no domain, then we need to use the shop domain
         if (empty($domain)) {
-            // make sure to get rid of any http prefixes or
-            // also any sub shop slugs like /de or anything else
-            // that would NOT work with Mollie and Apple Pay!
-            $domainExtractor = new DomainExtractor();
+            return $shopDomain;
+        }
 
-            return $domainExtractor->getCleanDomain($this->shopService->getShopUrl(true));
+        $sanitizedDomain = $this->domainSanitizer->sanitizeDomain($domain);
+
+        if ($sanitizedDomain === $shopDomain) {
+            return $sanitizedDomain;
         }
 
         $allowList = $this->applePayDirectDomainAllowListGateway->getAllowList($context);
@@ -499,8 +503,6 @@ class ApplePayDirect
         if ($allowList->isEmpty()) {
             throw new ApplePayDirectDomainAllowListCanNotBeEmptyException();
         }
-
-        $sanitizedDomain = $this->domainSanitizer->sanitizeDomain($domain);
 
         if ($allowList->contains($sanitizedDomain) === false) {
             throw new ApplePayDirectDomainNotInAllowListException($sanitizedDomain);
