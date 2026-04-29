@@ -46,9 +46,10 @@ class CreditCardPayment extends PaymentHandler
             $this->customerService->setCardToken($customer, '', $salesChannelContext, $shouldSaveCardDetail);
 
             $isSaveCardToken = $customFields[CustomFieldsInterface::MOLLIE_KEY][CustomerService::CUSTOM_FIELDS_KEY_SHOULD_SAVE_CARD_DETAIL] ?? false;
-            // change payment sequenceType to first if this is a single-click payment
+
             if ($this->enableSingleClickPayment && $isSaveCardToken) {
                 $orderData['payment']['storeCredentials'] = true;
+                $orderData['payment']['sequenceType'] = PaymentHandler::PAYMENT_SEQUENCE_TYPE_ONE_OFF;
             }
 
             return $orderData;
@@ -66,7 +67,7 @@ class CreditCardPayment extends PaymentHandler
         }
 
         // if mandateId is not empty, it means this is recurring payment
-        $orderData['payment']['sequenceType'] = PaymentHandler::PAYMENT_SEQUENCE_TYPE_RECURRING;
+        $orderData['payment']['sequenceType'] = PaymentHandler::PAYMENT_SEQUENCE_TYPE_ONE_OFF;
         $orderData['payment']['mandateId'] = $mandateId;
         $this->customerService->setMandateId($customer, '', $salesChannelContext->getContext());
 
